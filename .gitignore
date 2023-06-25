@@ -4,4 +4,3 @@ __pycache__
 .env
 python3-virtualenv
 flask.sqlite
-.DS_Store
