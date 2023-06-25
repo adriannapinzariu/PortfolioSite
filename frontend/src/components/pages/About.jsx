@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Box, VStack, Heading, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, VStack, Heading, Text, Progress, UnorderedList, ListItem, useColorModeValue } from '@chakra-ui/react';
+
 import { motion } from 'framer-motion';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MeshBasicMaterial } from 'three';
@@ -42,6 +43,24 @@ function Model() {
 
   return model ? <primitive object={model.scene} position={[Math.random() * 100 - 50, Math.random() * 100, Math.random() * 100 - 50]} ref={ref} /> : null;
 }
+
+function TimelineEvent({ date, event }) {
+    return (
+      <ListItem>
+        <Text fontSize="xl" color={useColorModeValue("white", "white")}>{date}</Text>
+        <Text color={useColorModeValue("white", "white")}>{event}</Text>
+      </ListItem>
+    );
+  }
+  
+  function SkillBar({ skill, proficiency }) {
+    return (
+      <Box width="full">
+        <Text fontSize="xl" color={useColorModeValue("white", "white")}>{skill}</Text>
+        <Progress value={proficiency} colorScheme="purple" />
+      </Box>
+    );
+  }
 
 function About() {
   const bgGradient = useColorModeValue("linear(to-br, #4b5178, #3a4062)", "linear(to-br, #4b5178, #3a4062)");
@@ -90,9 +109,22 @@ function About() {
               fontSize="xl"
               color={useColorModeValue("white", "white")}
             >
-              More details about you, your work, experience, and skills.
+              From building and racing electric vehicles to researching how AI can combat human trafficking, I am always seeking out new and innovative ways to make a meaningful difference. I have also had the honor of delivering award-winning speeches on the important topics of women in STEM and algorithmic bias. My track record of success speaks for itself, having held 8 leadership positions within the past year and continuously inspiring and motivating others towards a common goal.
             </Text>
-          </VStack>
+          <Heading fontSize="2xl" color={useColorModeValue("white", "white")}>Work Experience & Education</Heading>
+          <UnorderedList>
+            <TimelineEvent date="2018-2022" event="Software Developer at XYZ" />
+            <TimelineEvent date="2014-2018" event="BSc in Computer Science at ABC University" />
+            {/* Add more TimelineEvent components here */}
+          </UnorderedList>
+          <Heading fontSize="2xl" color={useColorModeValue("white", "white")}>Skills</Heading>
+          <SkillBar skill="JavaScript" proficiency={90} />
+          <SkillBar skill="React" proficiency={85} />
+          {/* Add more SkillBar components here */}
+          <Heading fontSize="2xl" color={useColorModeValue("white", "white")}>Fun Facts</Heading>
+          <Text color={useColorModeValue("white", "white")}>I'm a chess enthusiast and have a 3D printer at home!</Text>
+          {/* Add more fun facts */}
+        </VStack>
         </Box>
       </MotionBox>
 
