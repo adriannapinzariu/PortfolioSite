@@ -1,15 +1,24 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Box, VStack, Heading, Text, Progress, UnorderedList, ListItem, useColorModeValue, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
-
+import { Box, VStack, Heading, useColorModeValue, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import Navbar from '../Navbar';
+import Footer from '../Footer';
 import { motion } from 'framer-motion';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MeshBasicMaterial } from 'three';
+import mark from "../../Assets/marker.png"
 
-import Navbar from '../Navbar';
-import Footer from '../Footer';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
 const MotionBox = motion(Box);
+const containerStyle = {
+  width: '800px',
+  height: '400px'
+};
+const center = {
+  lat: 49.144,
+  lng: -123.658
+};
 
 function Model() {
   const ref = useRef();
@@ -40,32 +49,35 @@ function Model() {
   return model ? <primitive object={model.scene} position={[Math.random() * 100 - 50, Math.random() * 100, Math.random() * 100 - 50]} ref={ref} /> : null;
 }
 
-function Hobby() {
+function Location() {
   const bgGradient = useColorModeValue("linear(to-br, #4b5178, #3a4062)", "linear(to-br, #4b5178, #3a4062)");
-  const url = `http://127.0.0.1:5000/hobby`;
-  const [data, setData] = useState([]);
+  const [markersData, setMarkersData] = useState([]);
+  const [markerIcon, setMarkerIcon] = useState(null);
 
   useEffect(() => {
-    getHobby(url);
-  }, []);
-
-  const colorModeValue = useColorModeValue("#4b5178", "white");
-
-  function getHobby(url) {
-    fetch(url)
+    fetch('http://127.0.0.1:5000/location')
       .then(response => response.json())
       .then(data => {
-        setData(data);
+        setMarkersData(data);
+
+        if(window.google) {
+          const markerIcon = {
+            url: mark, // url
+            scaledSize: new window.google.maps.Size(50, 50), // size
+            origin: new window.google.maps.Point(0, 0), // origin
+            anchor: new window.google.maps.Point(0, 0), // anchor
+          };
+          setMarkerIcon(markerIcon);
+        }
       })
       .catch(error => {
         console.error('Error:', error);
       });
-  }
+  }, []);
 
   return (
     <Box minHeight="100vh" display="flex" flexDirection="column" backgroundColor="#000000">
       <Navbar />
-
       <MotionBox
         flex="1"
         display="flex"
@@ -90,29 +102,47 @@ function Hobby() {
           shadow="2xl"
           backdropFilter="blur(10px)"
           borderWidth={2}
-          borderColor={colorModeValue}
+          borderColor={useColorModeValue("#4b5178", "white")}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          width="900px"
+          height="500px"
         >
           <Tabs colorScheme="purple" variant="soft-rounded" size="lg" isFitted>
             <TabPanels>
               <TabPanel>
                 <VStack spacing={6} alignItems="flex-start" maxW={'lg'}>
-                  <Heading fontSize="2xl" color="white">Hobbies</Heading>
-                  {data.map((item) => (
-                    <Box w="full" p={4}>
-                      <Text mb="1" fontSize="xl" color="white">{item.name}</Text>
-                      <img src={item.img} alt={item.name} />
-                    </Box>
-                  ))}
+                  <Heading fontSize="2xl" color={useColorModeValue("white", "white")}>Locations</Heading>
+                </VStack>
+                <VStack>
+                  <LoadScript
+                    googleMapsApiKey="AIzaSyB1_5WMHRVPnOGMLwy80LbpUK2yTjiU7fM"
+                  >
+                    <GoogleMap
+                      mapContainerStyle={containerStyle}
+                      center={center}
+                      zoom={1.5}
+                    >
+                      {markersData.map(marker => (
+                        <Marker
+                          key={marker.country}
+                          position={{ lat: marker.lat, lng: marker.long }}
+                          title={marker.country}
+                          icon={markerIcon}
+                        />
+                      ))}
+                    </GoogleMap>
+                  </LoadScript>
                 </VStack>
               </TabPanel>
             </TabPanels>
           </Tabs>
         </Box>
       </MotionBox>
-
       <Footer />
     </Box>
   );
 }
 
-export default Hobby;
+export default Location;

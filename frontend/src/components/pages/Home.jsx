@@ -33,7 +33,6 @@ function Model() {
     if (ref.current) {
       ref.current.position.y -= 0.1;
       if (ref.current.position.y < -50) ref.current.position.y = 100;
-
       ref.current.rotation.x += 0.01;
       ref.current.rotation.y += 0.01;
     }
@@ -107,7 +106,7 @@ function Home() {
             >
               Brief about you, your work and skills
             </Text>
-            <RouterLink to="/about-me">
+            <RouterLink to="/about">
               <MotionButton
                 whileHover="hover"
                 whileTap="tap"
