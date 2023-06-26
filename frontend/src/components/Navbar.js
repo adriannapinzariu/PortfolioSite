@@ -67,7 +67,7 @@ function Navbar() {
           Hobbies
         </MotionButton>
       </Link>
-      <Link to="/loaction">
+      <Link to="/location">
         <MotionButton
           mr="2"
           whileHover="hover"
@@ -77,7 +77,7 @@ function Navbar() {
           size="lg"
           color="white"
         >
-          Loaction
+          Location
         </MotionButton>
       </Link>
     </Flex>

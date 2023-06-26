@@ -6,7 +6,7 @@ import HomePage from './components/pages/Home.jsx';
 import AboutMe from './components/pages/About.jsx';
 import Experience from './components/pages/Experience.jsx';
 import Hobby from './components/pages/Hobby.jsx';
-
+import Location from './components/pages/Loaction.jsx';
 
 function App() {
   return (
@@ -29,6 +29,7 @@ function App() {
           <Route path="/about" element={<AboutMe />} /> 
           <Route path="/experience" element={<Experience />} />
           <Route path="/hobby" element={<Hobby />} />
+          <Route path="/location" element={<Location />} />
           {/* Notice the change here */}
         </Routes>
       </Router>
