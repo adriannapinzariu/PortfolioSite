@@ -2,7 +2,8 @@ import React from 'react';
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Global, css } from "@emotion/react";
-// Import Pages Here
+import HomePage from './components/pages/Home.jsx';
+import AboutMe from './components/pages/About.jsx';
 
 function App() {
   return (
@@ -21,10 +22,8 @@ function App() {
           `}
         />
         <Routes>
-          {/*
-          Set Routes Here
-          <Route path="/" element={< pagename />} />
-          */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about-me" element={<AboutMe />} /> {/* Notice the change here */}
         </Routes>
       </Router>
     </ChakraProvider>
