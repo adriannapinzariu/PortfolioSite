@@ -7,7 +7,9 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MeshBasicMaterial } from 'three';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
-
+import hobby1 from "../../Assets/hobby1.jpg";
+import hobby2 from "../../Assets/hobby2.jpg";
+import hobby3 from "../../Assets/hobby3.jpg";
 const MotionBox = motion(Box);
 
 function Model() {
@@ -80,75 +82,22 @@ function Hobby() {
                                 <VStack spacing={6} alignItems="flex-start" maxW={'lg'}>
                                     <Heading fontSize="2xl" color={useColorModeValue("white", "white")}>Hobbies</Heading>
                                     <Box w="full" p={4} borderBottom="1px" borderBottomColor="whiteAlpha.600">
-                                        <Text mb="1" fontSize="xl" color={useColorModeValue("white", "white")}>Senior Software Developer at XYZ Corp</Text>
-                                        <Text mb="1" color={useColorModeValue("white", "white")}>2023-Present</Text>
-                                        <Heading mb="1" fontSize="md" color={useColorModeValue("white", "white")}>Responsibilities:</Heading>
-                                        <UnorderedList color={useColorModeValue("white", "white")}>
-                                            <ListItem mb="1">Lead a team of developers to maintain and enhance the company website</ListItem>
-                                            <ListItem mb="1">Implemented agile development methodologies to improve productivity</ListItem>
-                                        </UnorderedList>
-                                        <Heading mb="1" fontSize="md" color={useColorModeValue("white", "white")}>Achievements:</Heading>
-                                        <UnorderedList color={useColorModeValue("white", "white")}>
-                                            <ListItem mb="1">Redesigned the company website, increasing traffic by 30%</ListItem>
-                                            <ListItem mb="1">Developed an automated testing suite, reducing bugs by 15%</ListItem>
-                                        </UnorderedList>
+                                        <Text mb="1" fontSize="xl" color={useColorModeValue("white", "white")}>Hobby 1</Text>
+                                        <img src={hobby1}/>
                                     </Box>
-
                                     <Box w="full" p={4} borderBottom="1px" borderBottomColor="whiteAlpha.600">
-                                        <Text mb="1" fontSize="xl" color={useColorModeValue("white", "white")}>Software Developer at ABC Inc</Text>
-                                        <Text mb="1" color={useColorModeValue("white", "white")}>2020-2023</Text>
-                                        <Heading mb="1" fontSize="md" color={useColorModeValue("white", "white")}>Responsibilities:</Heading>
-                                        <UnorderedList color={useColorModeValue("white", "white")}>
-                                            <ListItem mb="1">Developed new features for the company's main product</ListItem>
-                                            <ListItem mb="1">Maintained the codebase, debugging and fixing issues</ListItem>
-                                        </UnorderedList>
-                                        <Heading mb="1" fontSize="md" color={useColorModeValue("white", "white")}>Achievements:</Heading>
-                                        <UnorderedList color={useColorModeValue("white", "white")}>
-                                            <ListItem mb="1">Improved product performance by 20% with optimization techniques</ListItem>
-                                            <ListItem mb="1">Received Employee of the Year award in 2022</ListItem>
-                                        </UnorderedList>
+                                        <Text mb="1" fontSize="xl" color={useColorModeValue("white", "white")}>Hobby 2</Text>
+                                        <img src={hobby2}/>
+
+                                    </Box>
+                                    <Box w="full" p={4} borderBottom="1px" borderBottomColor="whiteAlpha.600">
+                                        <Text mb="1" fontSize="xl" color={useColorModeValue("white", "white")}>Hobby 3</Text>
+                                        <img src={hobby3}/>
                                     </Box>
 
-                                    <Box w="full" p={4}>
-                                        <Text mb="1" fontSize="xl" color={useColorModeValue("white", "white")}>Junior Software Developer at DEF Ltd</Text>
-                                        <Text mb="1" color={useColorModeValue("white", "white")}>2018-2020</Text>
-                                        <Heading mb="1" fontSize="md" color={useColorModeValue("white", "white")}>Responsibilities:</Heading>
-                                        <UnorderedList color={useColorModeValue("white", "white")}>
-                                            <ListItem mb="1">Worked in a team to develop and maintain several web applications</ListItem>
-                                            <ListItem mb="1">Contributed to code reviews and software design decisions</ListItem>
-                                        </UnorderedList>
-                                        <Heading mb="1" fontSize="md" color={useColorModeValue("white", "white")}>Achievements:</Heading>
-                                        <UnorderedList color={useColorModeValue("white", "white")}>
-                                            <ListItem mb="1">Contributed to a project that won the Best Software Design award</ListItem>
-                                            <ListItem mb="1">Improved application security, reducing security issues by 25%</ListItem>
-                                        </UnorderedList>
-                                    </Box>
                                 </VStack>
                             </TabPanel>
-                            <TabPanel>
-                                <VStack spacing={6} alignItems="flex-start" maxW={'lg'}>
-                                    <Heading fontSize="2xl" color={useColorModeValue("white", "white")}>Education</Heading>
-                                    <Box w="full" p={4} borderBottom="1px" borderBottomColor="whiteAlpha.600">
-                                        <Text mb="1" fontSize="xl" color={useColorModeValue("white", "white")}>MSc in Computer Science, University of Example</Text>
-                                        <Text mb="1" color={useColorModeValue("white", "white")}>2016-2018</Text>
-                                        <Heading mb="1" fontSize="md" color={useColorModeValue("white", "white")}>Coursework:</Heading>
-                                        <UnorderedList color={useColorModeValue("white", "white")}>
-                                            <ListItem mb="1">Advanced Algorithms</ListItem>
-                                            <ListItem mb="1">Distributed Systems</ListItem>
-                                        </UnorderedList>
-                                    </Box>
 
-                                    <Box w="full" p={4} borderBottomColor="whiteAlpha.600">
-                                        <Text mb="1" fontSize="xl" color={useColorModeValue("white", "white")}>BSc in Computer Science, University of Example</Text>
-                                        <Text mb="1" color={useColorModeValue("white", "white")}>2012-2016</Text>
-                                        <Heading mb="1" fontSize="md" color={useColorModeValue("white", "white")}>Coursework:</Heading>
-                                        <UnorderedList color={useColorModeValue("white", "white")}>
-                                            <ListItem mb="1">Data Structures</ListItem>
-                                            <ListItem mb="1">Computer Networks</ListItem>
-                                        </UnorderedList>
-                                    </Box>
-                                </VStack>
-                            </TabPanel>
 
                         </TabPanels>
                     </Tabs>
