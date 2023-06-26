@@ -38,20 +38,44 @@ def get_hobby():
     ]
     return jsonify(response_body)
 
-
 @app.route('/experience')
 def get_experience():
     response_body = [
         {
             "title": "Senior Software Developer at XYZ Corp",
             "time": "2023-Present",
-            "responsibilities": "Lead a team of developers to maintain and enhance the company website. Implemented agile development methodologies to improve productivity"
-        },
+            "responsibility": ["Lead a team of developers to maintain and enhance the company website", "Implemented agile development methodologies to improve productivity"],
+            "achievement": ["Redesigned the company website, increasing traffic by 30%", "Developed an automated testing suite, reducing bugs by 15%"]
+        }, 
         {
             "title": "Software Developer at ABC Inc",
             "time": "2020-2023",
-            "responsibilities": "Worked as part of a team to maintain and enhance the company website. Implemented agile development methodologies to improve productivity"
+            "responsibility": ["Worked as part of a team to maintain and enhance the company website", "Implemented agile development methodologies to improve productivity"],
+            "achievement": ["Redesigned the company website, increasing traffic by 30%", "Developed an automated testing suite, reducing bugs by 15%"]
+        },
+        {
+            "title": "Junior Software Developer at DEF Ltd",
+            "time": "2020-2023",
+            "responsibility": ["Worked as part of a team to maintain and enhance the company website", "Implemented agile development methodologies to improve productivity"],
+            "achievement": ["Redesigned the company website, increasing traffic by 30%", "Developed an automated testing suite, reducing bugs by 15%"]
         }
+    ]
+    return jsonify(response_body)
+
+@app.route('/education')
+def get_education():
+    response_body = [
+        {
+            "title": "MSc in Computer Science, University of Example",
+            "time": "2016-2018",
+            "coursework": ["Advanced Algorithms", "Distributed Systems"],
+        }, 
+        {
+            "title": "BSc in Computer Science, University of Example",
+            "time": "2012-2016",
+            "coursework": ["Data Structures", "Computer Networks"],
+        }, 
+
     ]
     return jsonify(response_body)
 
