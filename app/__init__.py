@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -32,8 +32,6 @@ def get_hobby():
         {
             "name": "Chess",
             "img": "https://images.pexels.com/photos/260024/pexels-photo-260024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-
-
         }
     ]
     return jsonify(response_body)
@@ -95,3 +93,27 @@ def get_location():
         {"country": "South Korea", "lat": 35.9078, "long": 127.7669},
     ]
     return jsonify(response_body)
+
+@app.route('/index')
+def template_example():
+    experience_data = [
+        {
+            "title": "Senior Software Developer at XYZ Corp",
+            "time": "2023-Present",
+            "responsibility": ["Lead a team of developers to maintain and enhance the company website", "Implemented agile development methodologies to improve productivity"],
+            "achievement": ["Redesigned the company website, increasing traffic by 30%", "Developed an automated testing suite, reducing bugs by 15%"]
+        }, 
+        {
+            "title": "Software Developer at ABC Inc",
+            "time": "2020-2023",
+            "responsibility": ["Worked as part of a team to maintain and enhance the company website", "Implemented agile development methodologies to improve productivity"],
+            "achievement": ["Redesigned the company website, increasing traffic by 30%", "Developed an automated testing suite, reducing bugs by 15%"]
+        },
+        {
+            "title": "Junior Software Developer at DEF Ltd",
+            "time": "2020-2023",
+            "responsibility": ["Worked as part of a team to maintain and enhance the company website", "Implemented agile development methodologies to improve productivity"],
+            "achievement": ["Redesigned the company website, increasing traffic by 30%", "Developed an automated testing suite, reducing bugs by 15%"]
+        }
+    ]
+    return render_template('index.html', data=experience_data)
