@@ -1,24 +1,32 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Box, VStack, Heading, useColorModeValue, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
+import { Box, VStack, Heading, useColorModeValue, TabPanel, TabPanels, Tabs, AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay, Button } from '@chakra-ui/react';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 import { motion } from 'framer-motion';
+import { Raycaster, Vector2 } from 'three';
+import { MeshBasicMaterial, TextureLoader, SphereGeometry, Mesh, Vector3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { MeshBasicMaterial } from 'three';
-import mark from "../../Assets/marker.png"
+import earthTextureUrl from '../../Assets/earth.jpg'; // Path to your texture
 
-import { GoogleMap, useJsApiLoader, LoadScript, Marker } from '@react-google-maps/api';
+// Converts geographic coordinates to 3D Cartesian coordinates (for 3D Earth)
+function latLongToVector3(lat, lon, radius, height) {
+  var phi = (lat)*Math.PI/180;
+  var theta = (lon-180)*Math.PI/180;
+
+  var x = -(radius+height) * Math.cos(phi) * Math.cos(theta);
+  var y = (radius+height) * Math.sin(phi);
+  var z = (radius+height) * Math.cos(phi) * Math.sin(theta);
+
+  return new Vector3(x,y,z);
+}
 
 const MotionBox = motion(Box);
-const containerStyle = {
-  width: '800px',
-  height: '400px'
-};
-const center = {
-  lat: 49.144,
-  lng: -123.658
-};
 
 function Model() {
   const ref = useRef();
@@ -27,57 +35,119 @@ function Model() {
   const [model, setModel] = useState();
 
   useEffect(() => {
-    new GLTFLoader().load('/3D/puzzlePiece1.glb', (gltf) => {
-      gltf.scene.traverse((child) => {
-        if (child.isMesh) {
-          child.material = new MeshBasicMaterial({ wireframe: true, color });
-        }
+      new GLTFLoader().load('/3D/puzzlePiece1.glb', (gltf) => {
+          gltf.scene.traverse((child) => {
+              if (child.isMesh) {
+                  child.material = new MeshBasicMaterial({ wireframe: true, color });
+              }
+          });
+          setModel(gltf);
       });
-      setModel(gltf);
-    });
-  }, []);
+  }, [])
 
   useFrame(() => {
-    if (ref.current) {
-      ref.current.position.y -= 0.1;
-      if (ref.current.position.y < -50) ref.current.position.y = 100;
-      ref.current.rotation.x += 0.01;
-      ref.current.rotation.y += 0.01;
-    }
+      if (ref.current) {
+          ref.current.position.y -= 0.1;
+          if (ref.current.position.y < -50) ref.current.position.y = 100;
+          ref.current.rotation.x += 0.01;
+          ref.current.rotation.y += 0.01;
+      }
   });
 
   return model ? <primitive object={model.scene} position={[Math.random() * 100 - 50, Math.random() * 100, Math.random() * 100 - 50]} ref={ref} /> : null;
 }
 
-function Location() {
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: 'AIzaSyB1_5WMHRVPnOGMLwy80LbpUK2yTjiU7fM'
-  });
-  const bgGradient = useColorModeValue("linear(to-br, #4b5178, #3a4062)", "linear(to-br, #4b5178, #3a4062)");
+const Earth = () => {
+  const texture = useLoader(TextureLoader, earthTextureUrl);
+  const ref = useRef();
+  useFrame(() => (ref.current.rotation.y += 0.005));
+
   const [markersData, setMarkersData] = useState([]);
-  const [markerIcon, setMarkerIcon] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const { camera, raycaster, mouse } = useThree();
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/location')
       .then(response => response.json())
       .then(data => {
         setMarkersData(data);
-
-        if(isLoaded) {
-          const markerIcon = {
-            url: mark, // url
-            scaledSize: new window.google.maps.Size(50, 50), // size
-            origin: new window.google.maps.Point(0, 0), // origin
-            anchor: new window.google.maps.Point(0, 0), // anchor
-          };
-          setMarkerIcon(markerIcon);
-        }
       })
       .catch(error => {
         console.error('Error:', error);
       });
-  }, [isLoaded]);
+  }, []);
+
+  const handleMarkerClick = (marker) => {
+    fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${marker.lat},${marker.lng}&key=YOUR_GOOGLE_API_KEY`)
+    .then(response => response.json())
+    .then(data => setSelectedLocation(data.results[0].formatted_address))
+    .catch(error => console.error(error));
+    setIsOpen(true);
+  };
+
+  const onClose = () => setIsOpen(false);
+
+  const markerRefs = useRef([]);
+  const addRef = (el) => {
+    if (el && !markerRefs.current.includes(el)) {
+      markerRefs.current.push(el);
+    }
+  };
+
+  useEffect(() => {
+    const handleClick = () => {
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(markerRefs.current.map(ref => ref.current));
+      if (intersects.length > 0) {
+        const intersectedObject = intersects[0].object;
+        const marker = markersData.find(marker => marker.id === intersectedObject.userData.id);
+        if (marker) handleMarkerClick(marker);
+      }
+    };
+    window.addEventListener('click', handleClick);
+    return () => window.removeEventListener('click', handleClick);
+  }, [camera, raycaster, mouse, markerRefs, markersData]);
+
+  return (
+    <>
+       <mesh ref={ref}>
+        <sphereGeometry args={[2, 32, 32]} />
+        <meshStandardMaterial map={texture} />
+        {markersData?.length > 0 ? markersData.map((marker, index) => (
+          // replace ref={markerRefs.current[index]} with ref={addRef}
+          <mesh position={latLongToVector3(marker.lat, marker.long, 2, 0.1)} ref={addRef} userData={{ id: marker.id }}>
+            <sphereGeometry args={[0.05, 32, 32]} />
+            <meshBasicMaterial color="red" />
+          </mesh>
+        )) : console.error('Markers data is either undefined or empty.')}
+      </mesh>
+      <AlertDialog isOpen={isOpen} onClose={onClose}>
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Location
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              {selectedLocation}
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button onClick={onClose}>
+                Close
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </>
+  );
+};
+
+function Location() {
+  const bgGradient = useColorModeValue("linear(to-br, #4b5178, #3a4062)", "linear(to-br, #4b5178, #3a4062)");
 
   return (
     <Box minHeight="100vh" display="flex" flexDirection="column" backgroundColor="#000000">
@@ -95,58 +165,9 @@ function Location() {
         <Canvas style={{ position: "absolute", zIndex: 1, background: "#000000" }}>
           <ambientLight />
           <pointLight position={[10, 10, 10]} />
+          <Earth />
           {[...Array(200)].map((_, i) => <Model key={i} />)}
         </Canvas>
-
-        <Box
-          zIndex={2}
-          bg="#1a202c"
-          p={5}
-          rounded="xl"
-          shadow="2xl"
-          backdropFilter="blur(10px)"
-          borderWidth={2}
-          borderColor={useColorModeValue("#4b5178", "white")}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          width="900px"
-          height="500px"
-        >
-          <Tabs colorScheme="purple" variant="soft-rounded" size="lg" isFitted>
-            <TabPanels>
-              <TabPanel>
-                <VStack spacing={6} alignItems="flex-start" maxW={'lg'}>
-                  <Heading fontSize="2xl" color={useColorModeValue("white", "white")}>Locations</Heading>
-                </VStack>
-                <VStack>
-                {markersData.length > 0 && (
-  <LoadScript
-    googleMapsApiKey="AIzaSyB1_5WMHRVPnOGMLwy80LbpUK2yTjiU7fM"
-  >
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={center}
-      zoom={1.5}
-    >
-     {markersData.map((marker, index) => (
-    <Marker
-      key={`${marker.country}-${index}`}
-      position={{ lat: marker.lat, lng: marker.long }}
-      title={marker.country}
-      icon={markerIcon}
-    />
-))}
-
-    </GoogleMap>
-  </LoadScript>
-)}
-
-                </VStack>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Box>
       </MotionBox>
       <Footer />
     </Box>
