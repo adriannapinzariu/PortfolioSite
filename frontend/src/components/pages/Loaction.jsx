@@ -97,15 +97,21 @@ const Earth = () => {
   };
 
   useEffect(() => {
-    const handleClick = () => {
+    const handleClick = (event) => {
+      // Convert mouse position to normalized device coordinates (-1 to +1) for both components.
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  
       raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(markerRefs.current.map(ref => ref.current));
+      const validObjects = markerRefs.current.filter(ref => ref && ref.current).map(ref => ref.current);
+      const intersects = raycaster.intersectObjects(validObjects);
+  
       if (intersects.length > 0) {
-        const intersectedObject = intersects[0].object;
-        const marker = markersData.find(marker => marker.id === intersectedObject.userData.id);
-        if (marker) handleMarkerClick(marker);
+          const intersectedObject = intersects[0].object;
+          const marker = markersData.find(marker => marker.id === intersectedObject.userData.id);
+          if (marker) handleMarkerClick(marker);
       }
-    };
+  };  
     window.addEventListener('click', handleClick);
     return () => window.removeEventListener('click', handleClick);
   }, [camera, raycaster, mouse, markerRefs, markersData]);
@@ -119,7 +125,7 @@ const Earth = () => {
           // replace ref={markerRefs.current[index]} with ref={addRef}
           <mesh position={latLongToVector3(marker.lat, marker.long, 2, 0.1)} ref={addRef} userData={{ id: marker.id }}>
             <sphereGeometry args={[0.05, 32, 32]} />
-            <meshBasicMaterial color="red" />
+            <meshBasicMaterial color="purple" />
           </mesh>
         )) : console.error('Markers data is either undefined or empty.')}
       </mesh>
@@ -162,7 +168,7 @@ function Location() {
         animate={{ scale: [0.95, 1], opacity: [0, 1] }}
         transition={{ duration: 0.5 }}
       >
-        <Canvas style={{ position: "absolute", zIndex: 1, background: "#000000" }}>
+        <Canvas style={{ position: "absolute", zIndex: 1, background: "#000000" }} attach="onPointerDown">
           <ambientLight />
           <pointLight position={[10, 10, 10]} />
           <Earth />
