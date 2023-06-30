@@ -8,7 +8,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { MeshBasicMaterial } from 'three';
 import mark from "../../Assets/marker.png"
 
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, LoadScript, Marker } from '@react-google-maps/api';
 
 const MotionBox = motion(Box);
 const containerStyle = {
@@ -50,6 +50,10 @@ function Model() {
 }
 
 function Location() {
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: 'AIzaSyB1_5WMHRVPnOGMLwy80LbpUK2yTjiU7fM'
+  });
   const bgGradient = useColorModeValue("linear(to-br, #4b5178, #3a4062)", "linear(to-br, #4b5178, #3a4062)");
   const [markersData, setMarkersData] = useState([]);
   const [markerIcon, setMarkerIcon] = useState(null);
@@ -60,7 +64,7 @@ function Location() {
       .then(data => {
         setMarkersData(data);
 
-        if(window.google) {
+        if(isLoaded) {
           const markerIcon = {
             url: mark, // url
             scaledSize: new window.google.maps.Size(50, 50), // size
@@ -73,7 +77,7 @@ function Location() {
       .catch(error => {
         console.error('Error:', error);
       });
-  }, []);
+  }, [isLoaded]);
 
   return (
     <Box minHeight="100vh" display="flex" flexDirection="column" backgroundColor="#000000">
@@ -116,24 +120,28 @@ function Location() {
                   <Heading fontSize="2xl" color={useColorModeValue("white", "white")}>Locations</Heading>
                 </VStack>
                 <VStack>
-                  <LoadScript
-                    googleMapsApiKey="AIzaSyB1_5WMHRVPnOGMLwy80LbpUK2yTjiU7fM"
-                  >
-                    <GoogleMap
-                      mapContainerStyle={containerStyle}
-                      center={center}
-                      zoom={1.5}
-                    >
-                      {markersData.map(marker => (
-                        <Marker
-                          key={marker.country}
-                          position={{ lat: marker.lat, lng: marker.long }}
-                          title={marker.country}
-                          icon={markerIcon}
-                        />
-                      ))}
-                    </GoogleMap>
-                  </LoadScript>
+                {markersData.length > 0 && (
+  <LoadScript
+    googleMapsApiKey="AIzaSyB1_5WMHRVPnOGMLwy80LbpUK2yTjiU7fM"
+  >
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      center={center}
+      zoom={1.5}
+    >
+     {markersData.map((marker, index) => (
+    <Marker
+      key={`${marker.country}-${index}`}
+      position={{ lat: marker.lat, lng: marker.long }}
+      title={marker.country}
+      icon={markerIcon}
+    />
+))}
+
+    </GoogleMap>
+  </LoadScript>
+)}
+
                 </VStack>
               </TabPanel>
             </TabPanels>
