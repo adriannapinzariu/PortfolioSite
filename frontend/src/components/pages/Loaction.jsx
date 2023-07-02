@@ -80,9 +80,16 @@ const Earth = () => {
   }, []);
 
   const handleMarkerClick = (marker) => {
-    fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${marker.lat},${marker.lng}&key=YOUR_GOOGLE_API_KEY`)
+    
+    fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${marker.lat},${marker.lng}&key=AIzaSyB1_5WMHRVPnOGMLwy80LbpUK2yTjiU7fM`)
     .then(response => response.json())
-    .then(data => setSelectedLocation(data.results[0].formatted_address))
+    .then(data => {
+      console.log(data); // Debug: log the entire data object
+  if (!data.results || !data.results[0] || !data.results[0].formatted_address) {
+    throw new Error('The fetched data does not contain any address info');
+  }
+      setSelectedLocation(data.results[0].formatted_address)
+    })
     .catch(error => console.error(error));
     setIsOpen(true);
   };
@@ -91,6 +98,7 @@ const Earth = () => {
 
   const markerRefs = useRef([]);
   const addRef = (el) => {
+    console.log('Attempting to add ref:', el);
     if (el && !markerRefs.current.includes(el)) {
       markerRefs.current.push(el);
     }
@@ -101,6 +109,7 @@ const Earth = () => {
       // Convert mouse position to normalized device coordinates (-1 to +1) for both components.
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
   
       raycaster.setFromCamera(mouse, camera);
       const validObjects = markerRefs.current.filter(ref => ref && ref.current).map(ref => ref.current);
@@ -109,12 +118,16 @@ const Earth = () => {
       if (intersects.length > 0) {
           const intersectedObject = intersects[0].object;
           const marker = markersData.find(marker => marker.id === intersectedObject.userData.id);
-          if (marker) handleMarkerClick(marker);
+          if (marker) {
+              handleMarkerClick(marker);
+          }
       }
-  };  
+    };
+  
     window.addEventListener('click', handleClick);
     return () => window.removeEventListener('click', handleClick);
   }, [camera, raycaster, mouse, markerRefs, markersData]);
+  
 
   return (
     <>
@@ -122,12 +135,12 @@ const Earth = () => {
         <sphereGeometry args={[2, 32, 32]} />
         <meshStandardMaterial map={texture} />
         {markersData?.length > 0 ? markersData.map((marker, index) => (
-          // replace ref={markerRefs.current[index]} with ref={addRef}
-          <mesh position={latLongToVector3(marker.lat, marker.long, 2, 0.1)} ref={addRef} userData={{ id: marker.id }}>
-            <sphereGeometry args={[0.05, 32, 32]} />
-            <meshBasicMaterial color="purple" />
-          </mesh>
-        )) : console.error('Markers data is either undefined or empty.')}
+      <mesh position={latLongToVector3(marker.lat, marker.long, 2, 0.1)} ref={addRef} userData={{ id: index }}>
+       <sphereGeometry args={[0.05, 32, 32]} />
+       <meshBasicMaterial color="purple" />
+       </mesh>
+      )) : console.error('Markers data is either undefined or empty.')}
+
       </mesh>
       <AlertDialog isOpen={isOpen} onClose={onClose}>
         <AlertDialogOverlay>
