@@ -80,7 +80,7 @@ const Earth = () => {
   }, []);
 
   const handleMarkerClick = (marker) => {
-    
+    console.log(`Marker ${marker.id} clicked.`);
     fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${marker.lat},${marker.lng}&key=AIzaSyB1_5WMHRVPnOGMLwy80LbpUK2yTjiU7fM`)
     .then(response => response.json())
     .then(data => {
@@ -114,7 +114,7 @@ const Earth = () => {
       raycaster.setFromCamera(mouse, camera);
       const validObjects = markerRefs.current.filter(ref => ref && ref.current).map(ref => ref.current);
       const intersects = raycaster.intersectObjects(validObjects);
-  
+      console.log(intersects);
       if (intersects.length > 0) {
           const intersectedObject = intersects[0].object;
           const marker = markersData.find(marker => marker.id === intersectedObject.userData.id);
