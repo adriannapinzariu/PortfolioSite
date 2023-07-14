@@ -4,21 +4,24 @@ from flask_cors import CORS
 import os
 import datetime
 from playhouse.shortcuts import model_to_dict
+from playhouse.db_url import connect
 
 app = Flask(__name__)
 CORS(app)
 
-DATABASE_HOST = os.getenv("DATABASE_HOST")
-DATABASE_USER = os.getenv("DATABASE_USER")
-DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
-DATABASE_NAME = os.getenv("DATABASE_NAME")
+from dotenv import load_dotenv
+env_path = os.path.join(os.path.dirname(__file__), '..', 'example.env')
+load_dotenv(dotenv_path=env_path)
 
-mydb = MySQLDatabase(
-    DATABASE_NAME, 
-    user=DATABASE_USER, 
-    password=DATABASE_PASSWORD, 
-    host=DATABASE_HOST
-)
+MYSQL_HOST = os.getenv("MYSQL_HOST")
+MYSQL_USER = os.getenv("MYSQL_USER")
+MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
+MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
+
+DATABASE_URL = f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DATABASE}"
+print(MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE)
+
+mydb = connect(DATABASE_URL)
 
 #print(mydb)
 
@@ -30,8 +33,12 @@ class TimelinePost(Model):
 
     class Meta:
         database = mydb  
-mydb.connect()
-mydb.create_tables([TimelinePost])
+
+try:
+    mydb.connect()
+    mydb.create_tables([TimelinePost])
+except Exception as e:
+    print(f"Error while connecting to the database or creating tables: {e}")
 
 
 
@@ -128,14 +135,15 @@ def get_location():
 
 @app.route('/api/timeline_post', methods=['POST'])
 def post_time_line_post():
-    name= request.form['name'],
-    email=request.form['email'],
-    content=request.form['content']
+    data = request.get_json()
+    name= data.get('name')
+    email=data.get('email')
+    content=data.get('content')
     timeline_post = TimelinePost.create(name=name, email=email, content=content)
 
-    return model_to_dict(timeline_post)
+    return model_to_dict(timeline_post), 201
 
-@app.route('/api/timeline_post', methods=['POST'])
+@app.route('/api/timeline_post', methods=['GET'])
 def get_time_line_post():
     return {
         'timeline_posts': [
@@ -143,3 +151,6 @@ def get_time_line_post():
             for p in TimelinePost.select().order_by(TimelinePost.created_at.desc())  
         ]
     }
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
