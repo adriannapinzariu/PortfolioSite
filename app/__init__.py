@@ -1,8 +1,26 @@
+from peewee import *
 from flask import Flask, jsonify
 from flask_cors import CORS
+import os
+import datetime
 
 app = Flask(__name__)
 CORS(app)
+
+DATABASE_HOST = os.getenv("DATABASE_HOST")
+DATABASE_USER = os.getenv("DATABASE_USER")
+DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+
+mydb = MySQLDatabase(
+    DATABASE_NAME, 
+    user=DATABASE_USER, 
+    password=DATABASE_PASSWORD, 
+    host=DATABASE_HOST
+)
+
+print(mydb)
+
 
 
 @app.route('/home')
