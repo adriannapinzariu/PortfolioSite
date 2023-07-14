@@ -1,8 +1,9 @@
 from peewee import *
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
 import datetime
+from playhouse.shortcuts import model_to_dict
 
 app = Flask(__name__)
 CORS(app)
@@ -124,3 +125,12 @@ def get_location():
         {"country": "South Korea", "lat": 35.9078, "long": 127.7669},
     ]
     return jsonify(response_body)
+
+@app.route('/api/timeline_post', methods=['POST'])
+def post_time_line_post():
+        name= request.form['name'],
+        email=request.form['email'],
+        content=request.form['content']
+        timeline_post = TimelinePost.create(name=name, email=email, content=content)
+
+        return model_to_dict(timeline_post)
