@@ -36,10 +36,12 @@ You need to do all your progress here.
 
 ## Installation
 
+Now to Setup Flask use these Following Commands:
 Make sure you have python3 and pip installed
 
 Create and activate virtual environment using virtualenv
 ```bash
+$ cd app
 $ python -m venv python3-virtualenv
 $ source python3-virtualenv/bin/activate
 ```
@@ -50,13 +52,19 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install all dep
 pip install -r requirements.txt
 ```
 
+Now to Setup React open another terminal & use these Following Commands:
+```bash
+$ cd frontend
+$ npm install
+```
+
 ## Usage
 
 Create a .env file using the example.env template (make a copy using the variables inside of the template)
 
 Start flask development server
 ```bash
-$ export FLASK_ENV=development
+$ export FLASK_ENV=__init__
 $ flask run
 ```
 
@@ -69,6 +77,19 @@ You should get a response like this in the terminal:
 ```
 
 You'll now be able to access the website at `localhost:5000` or `127.0.0.1:5000` in the browser! 
+
+Now, to start your React app, open a new terminal, navigate to the frontend directory and run:
+
+bash
+```bash
+$ cd frontend
+$ npm start
+```
+
+Your React app should now be running on http://localhost:3000.
+
+You'll now be able to access the Flask app at localhost:5000 or 127.0.0.1:5000 and the React app at localhost:3000 in the browser! Currently, you must be running both browsers to get the frontend and backend connected.
+
 
 *Note: The portfolio site will only work on your local machine while you have it running inside of your terminal. We'll go through how to host it in the cloud in the next few weeks!* 
 
