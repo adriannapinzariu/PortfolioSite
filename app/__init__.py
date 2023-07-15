@@ -6,7 +6,8 @@ import os
 import datetime
 from playhouse.shortcuts import model_to_dict
 from playhouse.db_url import connect
-from gravatar import Gravatar
+import hashlib
+import urllib
 
 
 app = Flask(__name__)
@@ -29,6 +30,18 @@ class TimelinePost(Model):
     email = CharField()
     content = TextField()
     created_at = DateTimeField(default=datetime.datetime.now)
+
+    @property
+    def gravatar(self):
+        email = self.email.lower().encode('utf-8')
+        default = "https://example.com/static/images/defaultavatar.jpg"
+        size = 40
+
+        gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(email).hexdigest() + "?"
+        gravatar_url += urllib.parse.urlencode({'d':default, 's':str(size)})
+
+        return gravatar_url
+
 
     class Meta:
         database = mydb  
