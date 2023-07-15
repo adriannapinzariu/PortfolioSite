@@ -6,10 +6,13 @@
 <body>
     <h1>Welcome to the Timeline!</h1>
     <form id="postForm">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="text" id="email" placeholder="Email" required>
         <input type="text" id="title" placeholder="Title" required>
         <textarea id="content" placeholder="Content" required></textarea>
         <button type="submit">Post</button>
     </form>
+    
 
     <div id="posts">
         {% for post in posts %}
@@ -26,14 +29,17 @@
     
             const title = document.getElementById('title').value;
             const content = document.getElementById('content').value;
-    
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+
             fetch('/api/timeline_post', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ title: title, content: content }),
+            body: JSON.stringify({ name: name, email: email, content: content }),
             })
+
             .then(response => response.json())
             .then(data => {
             console.log('Success:', data);
