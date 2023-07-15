@@ -131,7 +131,7 @@ def get_location():
 
 @app.route('/timeline')
 def timeline():
-    posts = TimelinePost.select().order_by(TimelinePost.timestamp.desc())
+    posts = TimelinePost.select().order_by(TimelinePost.created_at.desc())
     return render_template('timeline.html', title="Timeline", posts=posts)
 
 @app.route('/api/timeline_post', methods=['POST'])
@@ -158,7 +158,7 @@ def get_time_line_post():
     return {
         'timeline_posts': [
             model_to_dict(p)
-            for p in TimelinePost.select().order_by(TimelinePost.created_at.desc())  
+            for p in TimelinePost.select().order_by(TimelinePost.created_at.desc())
         ]
     }
 
@@ -173,4 +173,5 @@ def delete_timeline_post(id):
         return jsonify({"success": "Post was successfully deleted"}), 200
 
 if __name__ == '__main__':
+    app.debug = True
     app.run(host='0.0.0.0', port=5000)
