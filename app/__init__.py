@@ -159,16 +159,13 @@ def get_time_line_post():
 
 @app.route("/api/timeline_post/<int:id>", methods=["DELETE"])
 def delete_timeline_post(id):
-    try:
-        post = TimelinePost.get(TimelinePost.id == id)
-    except TimelinePost.DoesNotExist:
-        return jsonify({"error": "Post not found"}), 404
-
     query = TimelinePost.delete().where(TimelinePost.id == id)
-    query.execute()
+    deleted_count = query.execute()
 
-    return jsonify({"success": "Post was successfully deleted"}), 200
-
+    if deleted_count == 0:
+        return jsonify({"message": "Post did not exist"}), 200
+    else:
+        return jsonify({"success": "Post was successfully deleted"}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
