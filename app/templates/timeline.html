@@ -10,5 +10,16 @@
         <textarea id="content" placeholder="Content" required></textarea>
         <button type="submit">Post</button>
     </form>
+
+    <div id="posts">
+        {% for post in posts %}
+        <div class="post">
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    
 </body>
 </html>
