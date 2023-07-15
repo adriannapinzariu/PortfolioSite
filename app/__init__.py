@@ -1,5 +1,5 @@
 from peewee import *
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 import os
 import datetime
@@ -128,6 +128,10 @@ def get_location():
         {"country": "South Korea", "lat": 35.9078, "long": 127.7669},
     ]
     return jsonify(response_body)
+
+@app.route('/timeline')
+def timeline():
+    return render_template('timeline.html', title="Timeline")
 
 @app.route('/api/timeline_post', methods=['POST'])
 def post_time_line_post():
