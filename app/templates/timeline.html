@@ -17,6 +17,7 @@
     <div id="posts">
         {% for post in posts %}
         <div class="post">
+            <img src="{{ post.gravatar }}" alt="Profile picture">
             <h2>{{ post.title }}</h2>
             <p>{{ post.content }}</p>
         </div>
