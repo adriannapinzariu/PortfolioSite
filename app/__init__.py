@@ -1,10 +1,14 @@
 from peewee import *
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
+import json
 import os
 import datetime
 from playhouse.shortcuts import model_to_dict
 from playhouse.db_url import connect
+import hashlib
+import urllib
+
 
 app = Flask(__name__)
 CORS(app)
@@ -26,6 +30,18 @@ class TimelinePost(Model):
     email = CharField()
     content = TextField()
     created_at = DateTimeField(default=datetime.datetime.now)
+
+    @property
+    def gravatar(self):
+        email = self.email.lower().encode('utf-8')
+        default = "https://example.com/static/images/defaultavatar.jpg"
+        size = 40
+
+        gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(email).hexdigest() + "?"
+        gravatar_url += urllib.parse.urlencode({'d':default, 's':str(size)})
+
+        return gravatar_url
+
 
     class Meta:
         database = mydb  
@@ -129,15 +145,19 @@ def get_location():
     ]
     return jsonify(response_body)
 
+@app.route('/timeline')
+def timeline():
+    posts = TimelinePost.select().order_by(TimelinePost.created_at.desc())
+    return render_template('timeline.html', title="Timeline", posts=posts)
+
 @app.route('/api/timeline_post', methods=['POST'])
 def post_time_line_post():
     try:
         data = request.get_json()
 
-        name = request.form['name']
-        email = request.form['email']
-        content = request.form['content']
-
+        name = data['name']
+        email = data['email']
+        content = data['content']
 
         if name is None or email is None or content is None:
             return jsonify({"error": "Missing field"}), 400
@@ -153,7 +173,7 @@ def get_time_line_post():
     return {
         'timeline_posts': [
             model_to_dict(p)
-            for p in TimelinePost.select().order_by(TimelinePost.created_at.desc())  
+            for p in TimelinePost.select().order_by(TimelinePost.created_at.desc())
         ]
     }
 
@@ -168,4 +188,5 @@ def delete_timeline_post(id):
         return jsonify({"success": "Post was successfully deleted"}), 200
 
 if __name__ == '__main__':
+    app.debug = True
     app.run(host='0.0.0.0', port=5000)
