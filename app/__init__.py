@@ -134,10 +134,9 @@ def post_time_line_post():
     try:
         data = request.get_json()
 
-        name = request.form['name']
-        email = request.form['email']
-        content = request.form['content']
-
+        name = data['name']
+        email = data['email']
+        content = data['content']
 
         if name is None or email is None or content is None:
             return jsonify({"error": "Missing field"}), 400

@@ -1,11 +1,13 @@
 #!/bin/bash
 
-API_URL="http://localhost:5000/api/timeline_post"
+API_URL="http://127.0.0.1:5000/api/timeline_post"
 HEADER_CONTENT="Content-Type: application/json"
 POST_CONTENT="Test content $(date)"
 
 POST_RESPONSE=$(curl --silent --request POST --url $API_URL --header "$HEADER_CONTENT" --data "{\"name\": \"Adrianna\", \"email\": \"adriannapinzariu@gmail.com\", \"content\": \"$POST_CONTENT\"}")
 POST_ID=$(echo $POST_RESPONSE | jq '.id')
+echo "Post response: $POST_RESPONSE"
+
 echo "Created post with ID: $POST_ID"
 
 GET_RESPONSE=$(curl --silent --request GET --url $API_URL)
