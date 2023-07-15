@@ -20,6 +20,29 @@
         {% endfor %}
     </div>
 
+    <script>
+        document.getElementById('postForm').addEventListener('submit', function(event) {
+            event.preventDefault();
     
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+    
+            fetch('/api/timeline_post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title: title, content: content }),
+            })
+            .then(response => response.json())
+            .then(data => {
+            console.log('Success:', data);
+            location.reload();  
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+    </script>
 </body>
 </html>
