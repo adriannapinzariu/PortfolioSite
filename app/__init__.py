@@ -131,13 +131,22 @@ def get_location():
 
 @app.route('/api/timeline_post', methods=['POST'])
 def post_time_line_post():
-    data = request.get_json()
-    name= data.get('name')
-    email=data.get('email')
-    content=data.get('content')
-    timeline_post = TimelinePost.create(name=name, email=email, content=content)
+    try:
+        data = request.get_json()
 
-    return model_to_dict(timeline_post), 201
+        name = request.form['name']
+        email = request.form['email']
+        content = request.form['content']
+
+
+        if name is None or email is None or content is None:
+            return jsonify({"error": "Missing field"}), 400
+
+        timeline_post = TimelinePost.create(name=name, email=email, content=content)
+
+        return model_to_dict(timeline_post)
+    except Exception as e:
+        return jsonify({"error": "Error while creating a new post: " + str(e)}), 500
 
 @app.route('/api/timeline_post', methods=['GET'])
 def get_time_line_post():
@@ -147,6 +156,19 @@ def get_time_line_post():
             for p in TimelinePost.select().order_by(TimelinePost.created_at.desc())  
         ]
     }
+
+@app.route("/api/timeline_post/<int:id>", methods=["DELETE"])
+def delete_timeline_post(id):
+    try:
+        post = TimelinePost.get(TimelinePost.id == id)
+    except TimelinePost.DoesNotExist:
+        return jsonify({"error": "Post not found"}), 404
+
+    query = TimelinePost.delete().where(TimelinePost.id == id)
+    query.execute()
+
+    return jsonify({"success": "Post was successfully deleted"}), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
