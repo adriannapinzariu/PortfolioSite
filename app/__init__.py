@@ -17,13 +17,20 @@ from dotenv import load_dotenv
 env_path = os.path.join(os.path.dirname(__file__), '..', 'example.env')
 load_dotenv(dotenv_path=env_path)
 
-MYSQL_HOST = os.getenv("MYSQL_HOST")
-MYSQL_USER = os.getenv("MYSQL_USER")
-MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
-MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
 
-DATABASE_URL = f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DATABASE}"
-mydb = connect(DATABASE_URL)
+if os.getenv("TESTING") == "true":
+    print("Running in test mode")
+    mydb = SqliteDatabase('file:memory?mode=memory&cache=shared', uri=True)
+else:
+    mydb = MySQLDatabase(os.getenv("MySQLDatabase"),
+    host = os.getenv("MYSQL_HOST"),
+    user = os.getenv("MYSQL_USER"),
+    password = os.getenv("MYSQL_PASSWORD"),
+    port=3306
+    )
+
+#DATABASE_URL = f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DATABASE}"
+#mydb = connect(DATABASE_URL)
 
 class TimelinePost(Model):
     name = CharField()
