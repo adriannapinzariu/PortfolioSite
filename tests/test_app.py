@@ -1,4 +1,6 @@
 import unittest
+import datetime
+from dateutil.parser import parse
 import json
 import os
 os.environ['TESTING'] = 'true'
@@ -11,9 +13,26 @@ class AppTestCase(unittest.TestCase):
 
     def test_home(self):
         response = self.client.get('/home')
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
+
         assert "message" in data
-        # TODO: Add more tests relating to the home page
+        self.assertEqual(data["message"], "Connected successfully. Making a small change to site.")
+
+        assert "server_time" in data
+        try:
+            parse(data["server_time"])
+        except ValueError:
+            self.fail("server_time is not a valid ISO 8601 date")
+
+        assert "database_status" in data
+        self.assertTrue(data["database_status"], "Database connection failed.")
+
+        assert "api_version" in data
+        self.assertEqual(data["api_version"], "1.0")
+
+        assert "welcome_message" in data
+        self.assertEqual(data["welcome_message"], "Welcome to my portfolio site")
 
     def test_timeline(self):
         response = self.client.get('/api/timeline_post')
