@@ -4,6 +4,7 @@ from flask_cors import CORS
 import json
 import os
 import datetime
+from dateutil.parser import parse
 from playhouse.shortcuts import model_to_dict
 from playhouse.db_url import connect
 import hashlib
@@ -17,13 +18,20 @@ from dotenv import load_dotenv
 env_path = os.path.join(os.path.dirname(__file__), '..', 'example.env')
 load_dotenv(dotenv_path=env_path)
 
-MYSQL_HOST = os.getenv("MYSQL_HOST")
-MYSQL_USER = os.getenv("MYSQL_USER")
-MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
-MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
 
-DATABASE_URL = f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DATABASE}"
-mydb = connect(DATABASE_URL)
+if os.getenv("TESTING") == "true":
+    print("Running in test mode")
+    mydb = SqliteDatabase('file:memory?mode=memory&cache=shared', uri=True)
+else:
+    mydb = MySQLDatabase(os.getenv("MySQLDatabase"),
+    host = os.getenv("MYSQL_HOST"),
+    user = os.getenv("MYSQL_USER"),
+    password = os.getenv("MYSQL_PASSWORD"),
+    port=3306
+    )
+
+# Saving This for Later Use:
+# DATABASE_URL = f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DATABASE}"
 
 class TimelinePost(Model):
     name = CharField()
@@ -54,9 +62,22 @@ except Exception as e:
 
 
 
+#@app.route('/home')
+#def home():
+#    return jsonify({"message": "Connected successfully. Making a small change to site."})
+
 @app.route('/home')
 def home():
-    return jsonify({"message": "Connected successfully. Making a small change to site."})
+    from datetime import datetime
+    db_status = "OK" if mydb.is_closed() == False else "NOT OK"
+    return jsonify({
+        "message": "Connected successfully. Making a small change to site.", 
+        "server_time": datetime.now().isoformat(),
+        "database_status": db_status,
+        "api_version": "1.0", 
+        "welcome_message": "Welcome to my portfolio site"  
+    })
+
 
 
 @app.route('/')
@@ -159,8 +180,12 @@ def post_time_line_post():
         email = data['email']
         content = data['content']
 
-        if name is None or email is None or content is None:
-            return jsonify({"error": "Missing field"}), 400
+        if not name:
+            return jsonify({"error": "Invalid name"}), 400
+        if '@' not in email:  
+            return jsonify({"error": "Invalid email"}), 400
+        if not content:
+            return jsonify({"error": "Invalid content"}), 400
 
         timeline_post = TimelinePost.create(name=name, email=email, content=content)
 
