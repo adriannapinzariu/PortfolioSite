@@ -36,13 +36,43 @@ class AppTestCase(unittest.TestCase):
 
     def test_timeline(self):
         response = self.client.get('/api/timeline_post')
-        assert response.status_code == 200
-        assert response.is_json
-        json = response.get_json()
-        assert "timeline_posts" in json
-        assert len(json['timeline_posts']) == 0
-        # TODO: Add more tests relating to /api/timeline_post GET and POST apis
-        # TODO: Add more tests relating to the timeline page
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.is_json)
+        data = response.get_json()
+        self.assertIn("timeline_posts", data)
+        self.assertEqual(len(data['timeline_posts']), 0)
+            
+        response = self.client.post('/api/timeline_post', json={
+            'name': 'Taylor Swift',
+            'email': 'tswift@example.com',
+            'content': 'Shake it off! Shake it off! Ah ah ah ahh!'
+        })
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/api/timeline_post')
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertEqual(len(data['timeline_posts']), 1)
+        self.assertEqual(data['timeline_posts'][0]['name'], 'Taylor Swift')
+        self.assertEqual(data['timeline_posts'][0]['email'], 'tswift@example.com')
+        self.assertEqual(data['timeline_posts'][0]['content'], 'Shake it off! Shake it off! Ah ah ah ahh!')
+
+        response = self.client.post('/api/timeline_post', json={
+            'name': 'Adrianna Pinzariu',
+            'email': 'adriannapinzariu@gmail.com',
+            'content': 'Currently Coding!'
+        })
+        self.assertEqual(response.status_code, 200)
+
+        # GET method test 2: Verifying both posts were created
+        response = self.client.get('/api/timeline_post')
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertEqual(len(data['timeline_posts']), 2)
+        self.assertEqual(data['timeline_posts'][0]['name'], 'Adrianna Pinzariu')
+        self.assertEqual(data['timeline_posts'][0]['email'], 'adriannapinzariu@gmail.com')
+        self.assertEqual(data['timeline_posts'][0]['content'], 'Currently Coding!')
+
 
     def test_malformed_timeline_post(self):
         # POST request missing name
