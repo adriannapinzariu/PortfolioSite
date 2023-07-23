@@ -1,4 +1,5 @@
 import unittest
+import json
 import os
 os.environ['TESTING'] = 'true'
 
@@ -9,10 +10,9 @@ class AppTestCase(unittest.TestCase):
         self.client = app.test_client()
 
     def test_home(self):
-        response = self.client.get("/")
-        assert response.status_code == 200
-        html = response.get_data(as_text=True)
-        assert "<title>MLH Fellow</title>" in html
+        response = self.client.get('/home')
+        data = json.loads(response.data)
+        assert "message" in data
         # TODO: Add more tests relating to the home page
 
     def test_timeline(self):
