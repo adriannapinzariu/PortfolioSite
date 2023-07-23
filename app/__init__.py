@@ -29,8 +29,8 @@ else:
     port=3306
     )
 
-#DATABASE_URL = f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DATABASE}"
-#mydb = connect(DATABASE_URL)
+# Saving This for Later Use:
+# DATABASE_URL = f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DATABASE}"
 
 class TimelinePost(Model):
     name = CharField()
@@ -166,8 +166,15 @@ def post_time_line_post():
         email = data['email']
         content = data['content']
 
-        if name is None or email is None or content is None:
-            return jsonify({"error": "Missing field"}), 400
+        #if name is None or email is None or content is None:
+            #return jsonify({"error": "Missing field"}), 400
+
+        if not name:
+            return jsonify({"error": "Invalid name"}), 400
+        if '@' not in email:  
+            return jsonify({"error": "Invalid email"}), 400
+        if not content:
+            return jsonify({"error": "Invalid content"}), 400
 
         timeline_post = TimelinePost.create(name=name, email=email, content=content)
 
