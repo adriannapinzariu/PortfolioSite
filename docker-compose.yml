@@ -1,0 +1,38 @@
+version: "3"
+services:
+  myportfolio:
+    container_name: myportfolio
+    build: .
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=mysql:3306
+    #command: ["/PortfolioSite/wait-mysql.sh", "mysql:3306", "python", "app/__init__.py", "--host=0.0.0.0"]
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/myportfolio
+    depends_on:
+      - mysql
+
+  mysql:
+    container_name: mysql
+    image: mariadb
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    volumes:
+      - mydatabase:/var/lib/mysql
+    
+volumes:
+  mydatabase:
+
+
+
