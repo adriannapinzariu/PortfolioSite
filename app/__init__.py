@@ -97,7 +97,7 @@ def home():
 @app.route('/')
 def index():
     response_body = {
-        "msg": "Successfully Connected!! Again"
+        "msg": "Successfully Connected!! Again!! And Another Again! :)"
     }
     return jsonify(response_body)
 
