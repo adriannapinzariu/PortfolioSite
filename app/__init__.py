@@ -85,7 +85,7 @@ def home():
     from datetime import datetime
     db_status = "OK" if mydb.is_closed() == False else "NOT OK"
     return jsonify({
-        "message": "Connected successfully. Making a small change to site.", 
+        "message": "Connected successfully. Making a small change to site. Another small change has been made haha.", 
         "server_time": datetime.now().isoformat(),
         "database_status": db_status,
         "api_version": "1.0", 
