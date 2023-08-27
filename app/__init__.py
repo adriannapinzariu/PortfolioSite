@@ -72,7 +72,9 @@ class TimelinePost(Model):
 
 try:
     mydb.connect()
+    print("the error is connect")
     mydb.create_tables([TimelinePost])
+    print("the error is creating table")
 except Exception as e:
     print(f"Error while connecting to the database or creating tables: {e}")
 
