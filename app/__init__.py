@@ -20,8 +20,8 @@ env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
 load_dotenv(dotenv_path=env_path)
 
 
-#MYSQL_HOST = os.getenv("MYSQL_HOST")
-MYSQL_HOST = "mysql"
+MYSQL_HOST = os.getenv("MYSQL_HOST")
+#MYSQL_HOST = "mysql"
 MYSQL_USER = os.getenv("MYSQL_USER")
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
@@ -29,7 +29,7 @@ MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
 DATABASE_URL = f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DATABASE}"
 #DATABASE_URL = f"mysql+mysqldb://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DATABASE}?charset=utf8mb4"
 
-mydb = connect(DATABASE_URL)
+#mydb = connect(DATABASE_URL)
 
 
 if os.getenv("TESTING") == "true":
@@ -42,6 +42,8 @@ else:
     password = os.getenv("MYSQL_PASSWORD"),
     port=3306
     )
+
+print(mydb)
 
 # Saving This for Later Use:
 # DATABASE_URL = f"mysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DATABASE}"
