@@ -17,7 +17,7 @@ class AppTestCase(unittest.TestCase):
         data = json.loads(response.data)
 
         assert "message" in data
-        self.assertEqual(data["message"], "Connected successfully. Making a small change to site.")
+        self.assertEqual(data["message"], "Connected successfully. Making a small change to site. Another small change has been made haha.")
 
         assert "server_time" in data
         try:
