@@ -24,8 +24,13 @@ jobs:
           python-version: '3.9' 
         
       - name: Set up a Python virtual environment
-        run: python -m venv venv
-        
+        run: python -m venv app/venv
+     
+      - name: Change Permissions
+        run: |
+            chmod +x app/venv/bin/python3
+            chmod +x app/venv/bin/pip
+      
       - name: Install Dependencies
         run: app/venv/bin/python3 -m pip install -r requirements.txt 
 
