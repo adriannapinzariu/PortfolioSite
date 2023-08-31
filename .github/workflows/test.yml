@@ -28,8 +28,8 @@ jobs:
      
       - name: Change Permissions
         run: |
-            chmod +x app/venv/bin/python3
-            chmod +x app/venv/bin/pip
+            sudo chmod +x app/venv/bin/python3
+            sudo chmod +x app/venv/bin/pip
       
       - name: Install Dependencies
         run: app/venv/bin/python3 -m pip install -r requirements.txt 
