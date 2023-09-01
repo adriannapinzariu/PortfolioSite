@@ -11,6 +11,14 @@ jobs:
     name: "Deploy to VPS"
     runs-on: ubuntu-latest
     steps:
+      - name: Debugging
+        run: |
+          echo "SSH_IP: $SSH_IP"
+          echo "SSH_USER: $SSH_USER"
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_IP: ${{ secrets.SSH_IP }}
+          
       - name: Configure SSH
         run:  |
           mkdir -p ~/.ssh/
