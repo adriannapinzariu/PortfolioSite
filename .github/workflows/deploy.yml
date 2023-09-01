@@ -14,7 +14,7 @@ jobs:
       - name: Debugging
         run: |
           echo "SSH_IP: $SSH_IP"
-          echo "SSH_USER: $SSH_USER"
+          echo "SSH_USER: $SSH_USER" 
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_IP: ${{ secrets.SSH_IP }}
