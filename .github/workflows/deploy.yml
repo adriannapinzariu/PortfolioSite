@@ -9,8 +9,6 @@ jobs:
     name: Deploy to VPS
     runs-on: ubuntu-latest
     steps:
-      - name: Checking out code
-        uses: actions/checkout@v2
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
