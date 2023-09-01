@@ -28,14 +28,8 @@ jobs:
           SSH_SECRET_KEY: ${{ secrets.SSH_SECRET_KEY }}
           SSH_IP: ${{ secrets.SSH_IP }}
           
-      - name: Display SSH Config Permissions
-        run: ls -l ~/.ssh/config
-
-      - name: Set Correct Permissions for SSH Config
-        run: chmod 600 ~/.ssh/config
-
-      - name: Set Correct Permissions for SSH Directory
-        run: chmod 700 ~/.ssh
+      - name: Print SSH Config (Debugging)
+        run: cat ~/.ssh/config
 
       - name: Deploy site
         run: ssh my-vps '~/PortfolioSite/redeploy-site.sh'
